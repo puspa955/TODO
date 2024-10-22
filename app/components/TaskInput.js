@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TaskDetailsInput from './TaskDetailsInput';
 import DateSelector from './DateSelector';
-import CategorySelector from './CategorySelector';
+import CategorySelector from './CategorySelector'; 
 
 const categories = ['Work', 'Home', 'School', 'Birthday'];
 
-const TaskInput = ({ addTask }) => {
+const TaskInput = ({ addTask, editingTask, updateTask }) => {
   const todayDate = new Date();
   const [task, setTask] = useState({ title: '', description: '', deadline: todayDate, category: '' });
   const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    if (editingTask) {
+      setTask(editingTask);
+      setShowForm(true);
+    } else {
+      setTask({ title: '', description: '', deadline: todayDate, category: '' });
+      setShowForm(false);
+    }
+  }, [editingTask]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,7 +36,11 @@ const TaskInput = ({ addTask }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (task.title && task.category) {
-      addTask(task);
+      if (editingTask) {
+        updateTask(task); 
+      } else {
+        addTask(task); 
+      }
       setTask({ title: '', description: '', deadline: todayDate, category: '' });
       setShowForm(false);
     }
@@ -39,38 +53,27 @@ const TaskInput = ({ addTask }) => {
           <TaskDetailsInput title={task.title} description={task.description} onChange={handleChange} />
 
           <div className="flex items-center space-x-2">
-            <CategorySelector
-              value={task.category}
-              onChange={handleChange}
-              categories={categories}
-            />
-
-            <DateSelector
-              selectedDate={task.deadline}
-              onDateChange={handleDateChange}
-              clearDate={clearDate}
-            />
+            <CategorySelector value={task.category} onChange={handleChange} categories={categories} />
+            <DateSelector selectedDate={task.deadline} onDateChange={handleDateChange} clearDate={clearDate} />
           </div>
 
-          <div className="flex justify-end items-center">
-            <div className="flex space-x-4">
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="px-4 py-2 rounded-md text-black bg-gray-200 hover:bg-gray-300 text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className={`px-4 py-2 rounded-md text-white text-sm ${
-                  task.title && task.category ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'
-                }`}
-                disabled={!task.title || !task.category}
-              >
-                Add task
-              </button>
-            </div>
+          <div className="flex justify-end items-center space-x-4">
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="px-4 py-2 rounded-md text-black bg-gray-200 hover:bg-gray-300 text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`px-4 py-2 rounded-md text-white text-sm ${
+                task.title && task.category ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'
+              }`}
+              disabled={!task.title || !task.category}
+            >
+              {editingTask ? 'Update Task' : 'Add Task'}
+            </button>
           </div>
         </form>
       ) : (
