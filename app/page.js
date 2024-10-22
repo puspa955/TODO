@@ -19,8 +19,8 @@ export default function Home() {
   };
 
   const startEditTask = (index) => {
-    setEditingTaskIndex(index); // Set the task to be edited
-    setEditedTask(tasks[index]); // Set the current task for editing
+    setEditingTaskIndex(index); 
+    setEditedTask(tasks[index]); 
   };
 
   const saveEditedTask = () => {
@@ -28,6 +28,10 @@ export default function Home() {
       index === editingTaskIndex ? editedTask : task
     );
     setTasks(updatedTasks);
+    cancelEditTask(); // Reset editing state after saving
+  };
+
+  const cancelEditTask = () => {
     setEditingTaskIndex(null); // Reset editing task
     setEditedTask({ title: '', description: '', deadline: null }); // Clear edited task
   };
@@ -56,22 +60,23 @@ export default function Home() {
           completeTask={completeTask}
           editingTaskIndex={editingTaskIndex}
           saveEditedTask={saveEditedTask}
-          editedTask={editedTask} // Pass editedTask for rendering in TaskList
-          setEditedTask={setEditedTask} // Pass the setter to update editedTask
+          cancelEditTask={cancelEditTask} 
+          editedTask={editedTask} 
+          setEditedTask={setEditedTask} 
         />
-        
+
         {/* Conditionally render Completed Tasks section */}
         {completedTasks.length > 0 && (
           <>
             <h2 className='text-xl mt-6'>Completed</h2>
             <TaskList
               tasks={completedTasks}
-              removeTask={removeCompletedTask} // Use specific function for completed tasks
+              removeTask={removeCompletedTask} 
               startEditTask={null}
               completeTask={null}
               editingTaskIndex={null}
               saveEditedTask={null}
-              isCompleted={true} // Pass isCompleted prop
+              isCompleted={true} 
             />
           </>
         )}
