@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { FaCheck, FaEdit, FaTrash } from 'react-icons/fa';
 import TaskDetailsInput from './TaskDetailsInput';
@@ -9,26 +10,29 @@ const categories = ['Work', 'Home', 'School', 'Birthday'];
 const TaskList = ({
   tasks,
   removeTask,
-  startEditTask,
   completeTask,
-  editingTaskIndex,
-  saveEditedTask,
-  cancelEditTask,
-  editedTask,
-  setEditedTask,
+  updateTask,
   isCompleted = false,
 }) => {
+  const [editingTask, setEditingTask] = useState({ index: null, details: { title: '', description: '', deadline: null, category: '' } });
+
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setEditedTask((prevTask) => ({
-      ...prevTask,
-      [name]: value,
+    setEditingTask((prev) => ({
+      ...prev,
+      details: {
+        ...prev.details,
+        [name]: value,
+      },
     }));
   };
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
-    saveEditedTask();
+    if (editingTask.index !== null) {
+      updateTask('edit', { index: editingTask.index, details: editingTask.details });
+      setEditingTask({ index: null, details: { title: '', description: '', deadline: null, category: '' } }); 
+    }
   };
 
   return (
@@ -37,32 +41,32 @@ const TaskList = ({
         tasks.map((task, index) => (
           <li key={index} className="bg-white p-4 rounded-lg shadow-md flex items-start justify-between">
             <div className="flex flex-grow space-x-3">
-              {editingTaskIndex === index ? (
+              {editingTask.index === index ? (
                 <form onSubmit={handleEditSubmit} className="flex flex-col space-y-4 w-full">
                   <TaskDetailsInput
-                    title={editedTask.title}
-                    description={editedTask.description}
+                    title={editingTask.details.title}
+                    description={editingTask.details.description}
                     onChange={handleEditChange}
                   />
 
                   <div className="flex items-center space-x-2">
                     <CategorySelector
-                      value={editedTask.category}
+                      value={editingTask.details.category}
                       onChange={handleEditChange}
                       categories={categories}
                     />
 
                     <DateSelector
-                      selectedDate={editedTask.deadline}
-                      onDateChange={(date) => setEditedTask({ ...editedTask, deadline: date })}
-                      clearDate={() => setEditedTask({ ...editedTask, deadline: null })}
+                      selectedDate={editingTask.details.deadline}
+                      onDateChange={(date) => setEditingTask({ ...editingTask, details: { ...editingTask.details, deadline: date } })}
+                      clearDate={() => setEditingTask({ ...editingTask, details: { ...editingTask.details, deadline: null } })}
                     />
                   </div>
 
                   <div className="flex justify-end items-center space-x-4">
                     <button
                       type="button"
-                      onClick={cancelEditTask}
+                      onClick={() => setEditingTask({ index: null, details: { title: '', description: '', deadline: null, category: '' } })} // Cancel editing
                       className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
                     >
                       Cancel
@@ -94,13 +98,14 @@ const TaskList = ({
             <div className="flex space-x-3">
               {!isCompleted ? (
                 <>
-                  {/* Show buttons only if not editing this task */}
-                  {editingTaskIndex !== index && (
+                  {editingTask.index !== index && (
                     <>
                       <button onClick={() => completeTask(index)}>
                         <FaCheck className="w-4 h-4" />
                       </button>
-                      <button onClick={() => startEditTask(index)}>
+                      <button onClick={() => {
+                        setEditingTask({ index, details: task }); // Load the task data into the edit form
+                      }}>
                         <FaEdit className="w-4 h-4" />
                       </button>
                       <button onClick={() => removeTask(index)}>

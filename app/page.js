@@ -1,82 +1,64 @@
-"use client"
-import { useState } from 'react';
+"use client";
+import { useState, useCallback, useMemo } from 'react';
 import TaskInput from './components/TaskInput';
 import TaskList from './components/TaskList';
 
 export default function Home() {
-  const [tasks, setTasks] = useState([]); // Todo List
-  const [completedTasks, setCompletedTasks] = useState([]); // Completed Tasks
-  const [editingTaskIndex, setEditingTaskIndex] = useState(null);
-  const [editedTask, setEditedTask] = useState({ title: '', description: '', deadline: null }); // Ensure it's initialized
+  const [tasks, setTasks] = useState([]);
 
-  const addTask = (newTask) => {
-    setTasks([...tasks, newTask]);
-  };
+  const updateTasks = useCallback((action, payload) => {
+    setTasks((prevTasks) => {
+      switch (action) {
+        case 'add':
+          return [...prevTasks, { ...payload, isCompleted: false }];
+        case 'edit':
+          return prevTasks.map((task, index) =>
+            index === payload.index ? payload.details : task
+          );
+        case 'remove':
+          return prevTasks.filter((_, index) => index !== payload);
+        case 'complete':
+          return prevTasks.map((task, index) =>
+            index === payload ? { ...task, isCompleted: true } : task
+          );
+        default:
+          return prevTasks;
+      }
+    });
+  }, []);
 
-  const removeTask = (indexToRemove) => {
-    const updatedTasks = tasks.filter((_, index) => index !== indexToRemove);
-    setTasks(updatedTasks);
-  };
-
-  const startEditTask = (index) => {
-    setEditingTaskIndex(index); 
-    setEditedTask(tasks[index]); 
-  };
-
-  const saveEditedTask = () => {
-    const updatedTasks = tasks.map((task, index) =>
-      index === editingTaskIndex ? editedTask : task
+  const taskLists = useMemo(() => {
+    return tasks.reduce(
+      (acc, task) => {
+        task.isCompleted ? acc.completedTasks.push(task) : acc.activeTasks.push(task);
+        return acc;
+      },
+      { activeTasks: [], completedTasks: [] }
     );
-    setTasks(updatedTasks);
-    cancelEditTask(); // Reset editing state after saving
-  };
-
-  const cancelEditTask = () => {
-    setEditingTaskIndex(null); // Reset editing task
-    setEditedTask({ title: '', description: '', deadline: null }); // Clear edited task
-  };
-
-  const completeTask = (index) => {
-    const taskToComplete = tasks[index];
-    setCompletedTasks([...completedTasks, taskToComplete]); // Add to completed tasks
-    removeTask(index); // Remove from todo list
-  };
-
-  const removeCompletedTask = (indexToRemove) => {
-    const updatedCompletedTasks = completedTasks.filter((_, index) => index !== indexToRemove);
-    setCompletedTasks(updatedCompletedTasks);
-  };
+  }, [tasks]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-xl">
         <h1 className='text-3xl text-center mb-6'>My TODO List</h1>
-        <TaskInput addTask={addTask} />
+        <TaskInput addTask={(newTask) => updateTasks('add', newTask)} />
+
         <h2 className='text-xl mt-6'>Todo</h2>
         <TaskList
-          tasks={tasks}
-          removeTask={removeTask}
-          startEditTask={startEditTask}
-          completeTask={completeTask}
-          editingTaskIndex={editingTaskIndex}
-          saveEditedTask={saveEditedTask}
-          cancelEditTask={cancelEditTask} 
-          editedTask={editedTask} 
-          setEditedTask={setEditedTask} 
+          tasks={taskLists.activeTasks}
+          removeTask={(index) => updateTasks('remove', index)}
+          updateTask={updateTasks}
+          completeTask={(index) => updateTasks('complete', index)}
+          isCompleted={false}
         />
 
-        {/* Conditionally render Completed Tasks section */}
-        {completedTasks.length > 0 && (
+        {taskLists.completedTasks.length > 0 && (
           <>
             <h2 className='text-xl mt-6'>Completed</h2>
             <TaskList
-              tasks={completedTasks}
-              removeTask={removeCompletedTask} 
-              startEditTask={null}
-              completeTask={null}
-              editingTaskIndex={null}
-              saveEditedTask={null}
-              isCompleted={true} 
+              tasks={taskLists.completedTasks}
+              removeTask={(index) => updateTasks('remove', index)}
+              isCompleted={true}
             />
           </>
         )}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import TaskDetailsInput from './TaskDetailsInput';
 import DateSelector from './DateSelector';
-import CategorySelector from './CategorySelector'; 
+import CategorySelector from './CategorySelector';
 
-const categories = ['Work', 'Home', 'School', 'Birthday']; 
+const categories = ['Work', 'Home', 'School', 'Birthday'];
 
 const TaskInput = ({ addTask }) => {
   const todayDate = new Date();
@@ -42,7 +42,7 @@ const TaskInput = ({ addTask }) => {
             <CategorySelector
               value={task.category}
               onChange={handleChange}
-              categories={categories} 
+              categories={categories}
             />
 
             <DateSelector
