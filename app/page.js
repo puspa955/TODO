@@ -18,9 +18,9 @@ export default function Home() {
         case 'remove':
           return prevTasks.filter((_, index) => index !== payload);
         case 'complete':
-          return prevTasks.map((task, index) =>
-            index === payload ? { ...task, isCompleted: true } : task
-          );
+          const completedTask = prevTasks[payload]; 
+          const updatedTasks = prevTasks.filter((_, index) => index !== payload); 
+          return [...updatedTasks, { ...completedTask, isCompleted: true }]; 
         default:
           return prevTasks;
       }

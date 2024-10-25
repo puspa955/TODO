@@ -1,66 +1,87 @@
 import { useState, useEffect } from 'react';
 import TaskDetailsInput from './TaskDetailsInput';
 import DateSelector from './DateSelector';
-import CategorySelector from './CategorySelector'; 
+import CategorySelector from './CategorySelector';
 
 const categories = ['Work', 'Home', 'School', 'Birthday'];
 
 const TaskInput = ({ addTask, editingTask, updateTask }) => {
   const todayDate = new Date();
-  const [task, setTask] = useState({ title: '', description: '', deadline: todayDate, category: '' });
-  const [showForm, setShowForm] = useState(false);
+  
+  const [state, setState] = useState({
+    task: { title: '', description: '', deadline: todayDate, category: '' },
+    showForm: false,
+  });
 
   useEffect(() => {
     if (editingTask) {
-      setTask(editingTask);
-      setShowForm(true);
+      setState({ task: editingTask, showForm: true });
     } else {
-      setTask({ title: '', description: '', deadline: todayDate, category: '' });
-      setShowForm(false);
+      setState({ task: { title: '', description: '', deadline: todayDate, category: '' }, showForm: false });
     }
   }, [editingTask]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setTask((prevTask) => ({ ...prevTask, [name]: value }));
+    setState((prevState) => ({
+      ...prevState,
+      task: { ...prevState.task, [name]: value },
+    }));
   };
 
   const handleDateChange = (date) => {
-    setTask((prevTask) => ({ ...prevTask, deadline: date }));
+    setState((prevState) => ({
+      ...prevState,
+      task: { ...prevState.task, deadline: date },
+    }));
   };
 
   const clearDate = () => {
-    setTask((prevTask) => ({ ...prevTask, deadline: null }));
+    setState((prevState) => ({
+      ...prevState,
+      task: { ...prevState.task, deadline: null },
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (task.title && task.category) {
+    if (state.task.title && state.task.category) {
       if (editingTask) {
-        updateTask(task); 
+        updateTask(state.task);
       } else {
-        addTask(task); 
+        addTask(state.task);
       }
-      setTask({ title: '', description: '', deadline: todayDate, category: '' });
-      setShowForm(false);
+      setState({ task: { title: '', description: '', deadline: todayDate, category: '' }, showForm: false });
     }
   };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md border border-gray-300">
-      {showForm ? (
+      {state.showForm ? (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <TaskDetailsInput title={task.title} description={task.description} onChange={handleChange} />
+          <TaskDetailsInput 
+            title={state.task.title} 
+            description={state.task.description} 
+            onChange={handleChange} 
+          />
 
           <div className="flex items-center space-x-2">
-            <CategorySelector value={task.category} onChange={handleChange} categories={categories} />
-            <DateSelector selectedDate={task.deadline} onDateChange={handleDateChange} clearDate={clearDate} />
+            <CategorySelector 
+              value={state.task.category} 
+              onChange={handleChange} 
+              categories={categories} 
+            />
+            <DateSelector 
+              selectedDate={state.task.deadline} 
+              onDateChange={handleDateChange} 
+              clearDate={clearDate} 
+            />
           </div>
 
           <div className="flex justify-end items-center space-x-4">
             <button
               type="button"
-              onClick={() => setShowForm(false)}
+              onClick={() => setState((prev) => ({ ...prev, showForm: false }))}
               className="px-4 py-2 rounded-md text-black bg-gray-200 hover:bg-gray-300 text-sm"
             >
               Cancel
@@ -68,16 +89,16 @@ const TaskInput = ({ addTask, editingTask, updateTask }) => {
             <button
               type="submit"
               className={`px-4 py-2 rounded-md text-white text-sm ${
-                task.title && task.category ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'
+                state.task.title && state.task.category ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-300 cursor-not-allowed'
               }`}
-              disabled={!task.title || !task.category}
+              disabled={!state.task.title || !state.task.category}
             >
               {editingTask ? 'Update Task' : 'Add Task'}
             </button>
           </div>
         </form>
       ) : (
-        <button onClick={() => setShowForm(true)} className="text-red-500 flex items-center text-sm group">
+        <button onClick={() => setState((prev) => ({ ...prev, showForm: true }))} className="text-red-500 flex items-center text-sm group">
           <span className="text-xl mr-2 pb-1 group-hover:bg-red-500 group-hover:text-white h-4 w-4 flex items-center justify-center rounded-full transition-colors">
             +
           </span>
