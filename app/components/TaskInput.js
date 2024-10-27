@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TaskDetailsInput from './TaskDetailsInput';
 import DateSelector from './DateSelector';
 import CategorySelector from './CategorySelector';
@@ -22,7 +22,14 @@ const TaskInput = ({ addTask, editingTask, updateTask }) => {
   }, [editingTask]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let name, value;
+    if (e.target) {
+      name = e.target.name;
+      value = e.target.value;
+    } else {
+      name = 'category';
+      value = e;
+    }
     setState((prevState) => ({
       ...prevState,
       task: { ...prevState.task, [name]: value },
