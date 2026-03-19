@@ -1,7 +1,7 @@
 "use client";
 import { useState, useCallback, useMemo } from 'react';
-import TaskInput from './components/TaskInput';
-import TaskList from './components/TaskList';
+import TaskInput from '../app/components/TaskInput';
+import TaskList from '../app/components/TaskList';
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);

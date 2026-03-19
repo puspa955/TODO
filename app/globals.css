@@ -2,3 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --background: #f0fdf4;
+
+    /* RichSelect theme overrides */
+    --rs-accent:        #16a34a;   /* green-600 */
+    --rs-accent-bg:     #dcfce7;   /* green-100 */
+    --rs-accent-hover:  #bbf7d0;   /* green-200 */
+    --rs-text:          #14532d;   /* green-900 */
+    --rs-text-muted:    #4ade80;   /* green-400 */
+    --rs-bg:            #ffffff;
+    --rs-bg-hover:      #f0fdf4;   /* green-50 */
+    --rs-selected-bg:   #dcfce7;
+    --rs-check-color:   #16a34a;
+    --rs-tag-bg:        #dcfce7;
+    --rs-tag-text:      #16a34a;
+    --filter-primary:          #dc2626;
+  --filter-primary-hover:    #b91c1c;
+  --filter-primary-text:     #ffffff;
+
+  --filter-bg:               #fff5f5;
+  --filter-bg-group:         #fee2e2;
+
+  --filter-border:           #fecaca;
+  --filter-border-top:       #dc2626;
+
+  --filter-text:             #1e293b;
+  --filter-text-muted:       #6b7280;
+  --filter-text-placeholder: #9ca3af;
+
+  --filter-input-border:     #fca5a5;
+
+  --filter-badge-bg:         #dc2626;
+  --filter-badge-text:       #ffffff;
+
+  --filter-radius:           2px;
+}
