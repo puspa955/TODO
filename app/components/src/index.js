@@ -1,3 +1,10 @@
-export { default as FilterPopover } from './FilterPopover';
-export { filter as applyFilterFn } from './utils/filterUtils';
-export { useFilter } from './hooks/useFilter';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DatasetFilter as OriginalDatasetFilter } from "./DatasetFilter";
+
+const defaultQueryClient = new QueryClient();
+
+export const DatasetFilter = (props) => (
+  <QueryClientProvider client={defaultQueryClient}>
+    <OriginalDatasetFilter {...props} />
+  </QueryClientProvider>
+);

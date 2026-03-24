@@ -7,17 +7,17 @@ const __dirname = dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { isServer }) => {
-    // Force React resolution from root node_modules
     config.resolve.alias = {
       ...config.resolve.alias,
       'react': resolve(__dirname, 'node_modules/react'),
       'react-dom': resolve(__dirname, 'node_modules/react-dom'),
       'react/jsx-runtime': resolve(__dirname, 'node_modules/react/jsx-runtime'),
+      '@tanstack/react-query': resolve(__dirname, 'node_modules/@tanstack/react-query'),
     };
     
     return config;
   },
-  transpilePackages: ['dayjs','@ankamala/filter', '@ankamala/select', '@ankamala/core'],
+  transpilePackages: ['dayjs', '@ankamala/filter', '@ankamala/select', '@ankamala/core'],
 };
 
 export default nextConfig;

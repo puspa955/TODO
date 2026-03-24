@@ -37,4 +37,22 @@
   --filter-badge-text:       #ffffff;
 
   --filter-radius:           2px;
+
+   --dsf-primary:        #e11d48;
+  --dsf-primary-hover:  #be123c;
+  --dsf-primary-light:  #fff1f2;
+  --dsf-primary-text:   #9f1239;
+  --dsf-border:         #fecdd3;
+  --dsf-border-focus:   #e11d48;
+  --dsf-bg-panel:       #ffffff;
+  --dsf-bg-page:        #fff5f7;
+  --dsf-text-primary:   #1a0008;
+  --dsf-text-secondary: #6b2037;
+  --dsf-text-muted:     #b47a87;
+  --dsf-badge-bg:       #fff1f2;
+  --dsf-badge-text:     #9f1239;
+  --dsf-badge-border:   #fecdd3;
+  --dsf-radius:         5px;
+  --dsf-panel-width:    278px;
+  --dsf-font:           -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
